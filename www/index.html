@@ -58,90 +58,82 @@
         $('#btnInit').on('click touch', function(event) {
 
           event.preventDefault();
+          
+          var xhr = new XMLHttpRequest();
+          var url = "http://policiatijuana.gob.mx/";
+          xhr.addEventListener('readystatechange', state_change, true);
+          xhr.open("GET", url, true);
+          xhr.send(null);
+          
+          function state_change() {
+             
+            if (xhr.status === 200) {
 
-          var db = window.sqlitePlugin.openDatabase({name: "partenovedad.db"});
+              var dataLocal = localStorage.getItem("ParteNovedad");
+              dataLocal = JSON.parse(data);
 
-          db.transaction(function(tx) {
-            tx.executeSql("SELECT * FROM parte_novedad;", 
-              [], 
-              function(tx, res) { 
-                var xhr = new XMLHttpRequest();
-                var url = "http://policiatijuana.gob.mx/";
-                xhr.addEventListener('readystatechange', state_change, true);
-                xhr.open("GET", url, true);
-                xhr.send(null);
-                
-                function state_change() {
-                   
-                  if (xhr.status === 200) {
+              for(var i = 0; i < dataLocal.length; i++) {
 
-                    for(var i = 0; i < res.rows.length; i++) {
-
-                      $.ajax({
-                        method: 'POST',
-                        url: 'http://joshuaranda.com/sspm/partenovedad/',
-                        async: true,
-                        crossDomain: true,
-                        data: { 
-                          numIncidente: res.rows.item(i).numIncidente, 
-                          bajoReporte : res.rows.item(i).bajoReporte, 
-                          atiende     : res.rows.item(i).atiende, 
-                          fechaEvento : res.rows.item(i).fechaEvento, 
-                          horaReporte : res.rows.item(i).horaReporte, 
-                          horaLlegada : res.rows.item(i).horaLlegada, 
-                          calle       : res.rows.item(i).calle, 
-                          numeroIntExt: res.rows.item(i).numeroIntExt, 
-                          colonia     : res.rows.item(i).colonia, 
-                          calleIzquierda: res.rows.item(i).calleIzquierda, 
-                          calleDerecha  : res.rows.item(i).calleDerecha, 
-                          nombreReportante: res.rows.item(i).nombreReportante, 
-                          nombrePresunto  : res.rows.item(i).nombrePresunto, 
-                          reporteManifesta: res.rows.item(i).reporteManifesta, 
-                          huboSolucion    : res.rows.item(i).huboSolucion, 
-                          reporteAcuerdo  : res.rows.item(i).reporteAcuerdo, 
-                          presentaAnte    : res.rows.item(i).presentaAnte, 
-                          numeroReporte   : res.rows.item(i).numeroReporte, 
-                          numeroInfraccion: res.rows.item(i).numeroInfraccion, 
-                          matriculaOficial: res.rows.item(i).matriculaOficial, 
-                          numeroUnidad    : res.rows.item(i).numeroUnidad, 
-                          matriculaSuperior: res.rows.item(i).matriculaOficial
-                        },
-                        cache: false,        
-                        beforeSend: function(){ $(".loader").fadeOut("200").css("display", "block"); },
-                        success: function(data) {   
-                          $(".loader").css("display", "none");
-                          $.snackbar({
-                            content: "Parte novedad ingresada.", 
-                            timeout: 5000
-                          });         
-
-                          tx.executeSql('DROP TABLE IF EXISTS parte_novedad');
-                          //window.sqlitePlugin.deleteDatabase({name: "partenovedad.db"});
-                          window.location.href = "home.html";  
-                        },
-                        error: function(xhr, textStatus, errorThrown ) {
-                          $(".loader").css("display", "none");        
-                          if (xhr.status === 500) {
-                            $.snackbar({
-                              content: "Ocurrio un error, intentalo nuevamente", 
-                              timeout: 5000
-                            }); 
-                          } else {
-                            $.snackbar({
-                              content: "Ocurrio un error, posiblemente el servidor no responde", 
-                              timeout: 5000
-                            }); 
-                          }
-                        }
-                      });
+                $.ajax({
+                  method: 'POST',
+                  url: 'http://joshuaranda.com/sspm/partenovedad/',
+                  async: true,
+                  crossDomain: true,
+                  data: { 
+                    numIncidente: dataLocal[count][0], 
+                    bajoReporte : dataLocal[count][1], 
+                    atiende     : dataLocal[count][2], 
+                    fechaEvento : dataLocal[count][3], 
+                    horaReporte : dataLocal[count][4], 
+                    horaLlegada : dataLocal[count][5], 
+                    calle       : dataLocal[count][6], 
+                    numeroIntExt: dataLocal[count][7], 
+                    colonia     : dataLocal[count][8], 
+                    calleIzquierda: dataLocal[count][9], 
+                    calleDerecha  : dataLocal[count][10], 
+                    nombreReportante: dataLocal[count][11], 
+                    nombrePresunto  : dataLocal[count][12], 
+                    reporteManifesta: dataLocal[count][13], 
+                    huboSolucion    : dataLocal[count][14], 
+                    reporteAcuerdo  : dataLocal[count][15], 
+                    presentaAnte    : dataLocal[count][16], 
+                    numeroReporte   : dataLocal[count][17], 
+                    numeroInfraccion: dataLocal[count][18], 
+                    matriculaOficial: dataLocal[count][19], 
+                    numeroUnidad    : dataLocal[count][20], 
+                    matriculaSuperior: dataLocal[count][21]
+                  },
+                  cache: false,        
+                  beforeSend: function(){ $(".loader").fadeOut("200").css("display", "block"); },
+                  success: function(data) {   
+                    $(".loader").css("display", "none");
+                    $.snackbar({
+                      content: "Parte novedad ingresada.", 
+                      timeout: 5000
+                    });         
+                  },
+                  error: function(xhr, textStatus, errorThrown ) {
+                    $(".loader").css("display", "none");        
+                    if (xhr.status === 500) {
+                      $.snackbar({
+                        content: "Ocurrio un error, intentalo nuevamente", 
+                        timeout: 5000
+                      }); 
+                    } else {
+                      $.snackbar({
+                        content: "Ocurrio un error, posiblemente el servidor no responde", 
+                        timeout: 5000
+                      }); 
                     }
-                  } 
-                  window.location.href = "home.html";    
-                }
-              });      
-          });
-        });
-
+                  }
+                });
+              }
+              localStorage.clear(); 
+              window.location.href = "home.html"; 
+            }
+            window.location.href = "home.html";    
+          }
+        }
       }
     </script>
   </body>

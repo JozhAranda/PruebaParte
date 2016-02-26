@@ -133,7 +133,7 @@
                             <input type="text" name="nombrePresunto" id="nombrePresunto" class="form-control inputShadow" placeholder="Nombre del presunto culpable" />
                         </div>                        
                         <div class="form-group col-xs-12 col-sm-12">
-                            <label class="control-label">Reporte (Manifesta)</label>
+                            <label class="control-label">Reporte (Manifiesta)</label>
                             <textarea name="reporteManifesta" id="reporteManifesta" class="form-control inputShadow" placeholder="Reporte (de los hechos y situación)" rows="5" style="resize: none;" required></textarea>
                         </div>
                         <div class="form-group col-xs-12 col-sm-4">
@@ -203,7 +203,7 @@
               <div class="col-xs-12">
                 <div class="col-md-12">
                   <h3>Guardar</h3>    
-                  <p>Recuerda haber relatado todos los hechos sucitados antes, durante y despues de la intervención.</p>          
+                  <p>Recuerda haber relatado todos los hechos suscitados antes, durante y después de la intervención.</p>          
                   <div class="clearfix"></div>
                   <div class="form-group col-xs-4 col-xs-offset-4 text-center">
                     <button class="btn btn-primary btn-block" id="submitParte" type="submit">
@@ -257,112 +257,107 @@
           var numeroUnidad      = $('#numeroUnidad').val();
           var matriculaSuperior = $('#matriculaSuperior').val();
           
-          var db = window.sqlitePlugin.openDatabase({name: "partenovedad.db"});
+          var data = localStorage.getItem("ParteNovedad");
+          data = JSON.parse(data);
+          data[data.length] = [numIncidente, bajoReporte, atiende, fechaEvento, horaReporte, horaLlegada, calle, numeroIntExt, 
+            colonia, calleIzquierda, calleDerecha, nombreReportante, nombrePresunto, reporteManifesta, huboSolucion, reporteAcuerdo,
+            presentaAnte, numeroReporte, numeroInfraccion, matriculaOficial, numeroUnidad, matriculaSuperior
+          ];
 
-          db.transaction(function(tx) {
-            //tx.executeSql('DROP TABLE IF EXISTS parte_novedad');
-            tx.executeSql('CREATE TABLE IF NOT EXISTS parte_novedad (id integer primary key, numIncidente text, bajoReporte text, atiende text, fechaEvento datetime, horaReporte text, horaLlegada text, calle text, numeroIntExt text, colonia text, calleIzquierda text, calleDerecha text, nombreReportante text, nombrePresunto text, reporteManifesta text, huboSolucion text, reporteAcuerdo text, presentaAnte text, numeroReporte text, numeroInfraccion text, matriculaOficial integer, numeroUnidad text, matriculaSuperior integer)');
+          localStorage.setItem("ParteNovedad", JSON.stringify(data));
 
-            tx.executeSql("INSERT INTO parte_novedad (numIncidente, bajoReporte, atiende, fechaEvento, horaReporte, horaLlegada, calle, numeroIntExt, colonia, calleIzquierda, calleDerecha, nombreReportante, nombrePresunto, reporteManifesta, huboSolucion, reporteAcuerdo, presentaAnte, numeroReporte, numeroInfraccion, matriculaOficial, numeroUnidad, matriculaSuperior) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-              [numIncidente, bajoReporte, atiende, fechaEvento, horaReporte, horaLlegada, calle, numeroIntExt, colonia, calleIzquierda, calleDerecha, nombreReportante, nombrePresunto, reporteManifesta, huboSolucion, reporteAcuerdo, presentaAnte, numeroReporte, numeroInfraccion, matriculaOficial, numeroUnidad, matriculaSuperior], 
-              function(tx, res) {
-                
-                tx.executeSql("SELECT * FROM parte_novedad;", 
-                  [], 
-                  function(tx, res) {
-                /*****************************/  
-                    var xhr = new XMLHttpRequest();
-                    var url = "http://policiatijuana.gob.mx/";
-                    xhr.addEventListener('readystatechange', state_change, true);
-                    xhr.open("GET", url, true);
-                    xhr.send(null);
-                    
-                    function state_change() {
-                       
-                      if (xhr.status === 200) {
-
-                        for(var i = 0; i < res.rows.length; i++) {
-
-                          $.ajax({
-                            method: 'POST',
-                            url: 'http://joshuaranda.com/sspm/partenovedad/',
-                            async: true,
-                            crossDomain: true,
-                            data: { 
-                              numIncidente: res.rows.item(i).numIncidente, 
-                              bajoReporte : res.rows.item(i).bajoReporte, 
-                              atiende     : res.rows.item(i).atiende, 
-                              fechaEvento : res.rows.item(i).fechaEvento, 
-                              horaReporte : res.rows.item(i).horaReporte, 
-                              horaLlegada : res.rows.item(i).horaLlegada, 
-                              calle       : res.rows.item(i).calle, 
-                              numeroIntExt: res.rows.item(i).numeroIntExt, 
-                              colonia     : res.rows.item(i).colonia, 
-                              calleIzquierda: res.rows.item(i).calleIzquierda, 
-                              calleDerecha  : res.rows.item(i).calleDerecha, 
-                              nombreReportante: res.rows.item(i).nombreReportante, 
-                              nombrePresunto  : res.rows.item(i).nombrePresunto, 
-                              reporteManifesta: res.rows.item(i).reporteManifesta, 
-                              huboSolucion    : res.rows.item(i).huboSolucion, 
-                              reporteAcuerdo  : res.rows.item(i).reporteAcuerdo, 
-                              presentaAnte    : res.rows.item(i).presentaAnte, 
-                              numeroReporte   : res.rows.item(i).numeroReporte, 
-                              numeroInfraccion: res.rows.item(i).numeroInfraccion, 
-                              matriculaOficial: res.rows.item(i).matriculaOficial, 
-                              numeroUnidad    : res.rows.item(i).numeroUnidad, 
-                              matriculaSuperior: res.rows.item(i).matriculaOficial
-                            },
-                            cache: false,        
-                            beforeSend: function(){ $(".loader").fadeOut("200").css("display", "block"); },
-                            success: function(data) {   
-                              $(".loader").css("display", "none");
-                              $.snackbar({
-                                content: "Parte novedad ingresada.", 
-                                timeout: 5000
-                              });      
-                              tx.executeSql('DROP TABLE IF EXISTS parte_novedad');
-                              //window.sqlitePlugin.deleteDatabase({name: "partenovedad.db"});  
-                            },
-                            error: function(xhr, textStatus, errorThrown) {
-                              $(".loader").css("display", "none");        
-                              if (xhr.status === 500) {
-                                $.snackbar({
-                                  content: "Ocurrio un error, no desistas e intentalo nuevamente", 
-                                  timeout: 5000
-                                }); 
-                              } else {
-                                $.snackbar({
-                                  content: "Ocurrio un error, posiblemente el servidor no responde", 
-                                  timeout: 5000
-                                }); 
-                              }
-                            }
-                          });
-                        }
-                      } else {   
-                        $(".loader").css("display", "none");
-                        $.snackbar({
-                          content: "Parte novedad ingresada.", 
-                          timeout: 5000
-                        });        
-                        location.reload();
-                        
-                      }
-
-                      location.reload();
-                    }                  
-              /****************************/
-                });
-
-            }, function(e) {
-
-              alert("ERROR: " + e.message);
-            });
-
-          });
+      /*****************************/  
+          var xhr = new XMLHttpRequest();
+          var url = "http://policiatijuana.gob.mx/";
+          xhr.addEventListener('readystatechange', state_change, true);
+          xhr.open("GET", url, true);
+          xhr.send(null);
           
+          function state_change() {
+             
+            if (xhr.status === 200) {
+              
+              var dataLocal = localStorage.getItem("ParteNovedad");
+              dataLocal = JSON.parse(data);
+
+              for(var i = 0; i < dataLocal.length; i++) {
+
+                $.ajax({
+                  method: 'POST',
+                  url: 'http://joshuaranda.com/sspm/partenovedad/',
+                  async: true,
+                  crossDomain: true,
+                  data: { 
+                    numIncidente: dataLocal[count][0], 
+                    bajoReporte : dataLocal[count][1], 
+                    atiende     : dataLocal[count][2], 
+                    fechaEvento : dataLocal[count][3], 
+                    horaReporte : dataLocal[count][4], 
+                    horaLlegada : dataLocal[count][5], 
+                    calle       : dataLocal[count][6], 
+                    numeroIntExt: dataLocal[count][7], 
+                    colonia     : dataLocal[count][8], 
+                    calleIzquierda: dataLocal[count][9], 
+                    calleDerecha  : dataLocal[count][10], 
+                    nombreReportante: dataLocal[count][11], 
+                    nombrePresunto  : dataLocal[count][12], 
+                    reporteManifesta: dataLocal[count][13], 
+                    huboSolucion    : dataLocal[count][14], 
+                    reporteAcuerdo  : dataLocal[count][15], 
+                    presentaAnte    : dataLocal[count][16], 
+                    numeroReporte   : dataLocal[count][17], 
+                    numeroInfraccion: dataLocal[count][18], 
+                    matriculaOficial: dataLocal[count][19], 
+                    numeroUnidad    : dataLocal[count][20], 
+                    matriculaSuperior: dataLocal[count][21]
+                  },
+                  cache: false,        
+                  beforeSend: function(){ $(".loader").fadeOut("200").css("display", "block"); },
+                  success: function(data) {   
+                    $(".loader").css("display", "none");
+                    $.snackbar({
+                      content: "Parte novedad ingresada.", 
+                      timeout: 5000
+                    });      
+                    localStorage.clear(); 
+                  },
+                  error: function(xhr, textStatus, errorThrown) {
+                    $(".loader").css("display", "none");        
+                    if (xhr.status === 500) {
+                      $.snackbar({
+                        content: "Ocurrio un error, no desistas e intentalo nuevamente", 
+                        timeout: 5000
+                      }); 
+                    } else {
+                      $.snackbar({
+                        content: "Ocurrio un error, posiblemente el servidor no responde", 
+                        timeout: 5000
+                      }); 
+                    }
+                  }
+                });
+              }
+            } else {   
+              $(".loader").css("display", "none");
+              $.snackbar({
+                content: "Parte novedad ingresada.", 
+                timeout: 5000
+              });        
+              location.reload();
+              
+            }
+
+            location.reload();
+          }                  
+      /****************************/          
         });
-      /******************************************/
+
+        //initialize
+        if(localStorage.getItem("ParteNovedad") == null) {
+          var data = [];
+          data = JSON.stringify(data);
+          localStorage.setItem("ParteNovedad", data);
+        }
       }
     </script>
   </body>
