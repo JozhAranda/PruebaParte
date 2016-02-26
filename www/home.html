@@ -317,7 +317,7 @@
                       timeout: 5000
                     });      
                     alert(dataLocal[i]);
-                    if(request) { localStorage.clear(); location.reload(); }
+                    if(request) { localStorage.clear(); /*location.reload();*/ }
                   },
                   error: function(xhr, textStatus, errorThrown) {
                     $(".loader").css("display", "none");        
@@ -341,7 +341,7 @@
                 content: "Parte novedad ingresada.", 
                 timeout: 5000
               });        
-              location.reload();              
+              //location.reload();              
             }
           }                  
       /****************************/          
