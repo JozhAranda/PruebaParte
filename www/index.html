@@ -70,6 +70,7 @@
             if (xhr.status === 200) {
 
               var dataLocal = localStorage.getItem("ParteNovedad");
+              alert(dataLocal);
               dataLocal = JSON.parse(dataLocal);
 
               for(var i = 0; i < dataLocal.length; i++) {
@@ -105,14 +106,14 @@
                   },
                   cache: false,        
                   beforeSend: function(){ $(".loader").fadeOut("200").css("display", "block"); },
-                  success: function(data) {   
+                  success: function(request) {   
                     $(".loader").css("display", "none");
                     $.snackbar({
                       content: "Parte novedad ingresada.", 
                       timeout: 5000
                     });         
                   },
-                  error: function(xhr, textStatus, errorThrown ) {
+                  error: function(xhr, textStatus, errorThrown) {
                     $(".loader").css("display", "none");        
                     if (xhr.status === 500) {
                       $.snackbar({

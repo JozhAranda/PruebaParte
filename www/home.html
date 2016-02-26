@@ -257,15 +257,13 @@
           var numeroUnidad      = $('#numeroUnidad').val();
           var matriculaSuperior = $('#matriculaSuperior').val();
           
-          var data = localStorage.getItem("ParteNovedad");
-          data = JSON.parse(data);
-          data[data.length] = [numIncidente, bajoReporte, atiende, fechaEvento, horaReporte, horaLlegada, calle, numeroIntExt, 
-            colonia, calleIzquierda, calleDerecha, nombreReportante, nombrePresunto, reporteManifesta, huboSolucion, reporteAcuerdo,
-            presentaAnte, numeroReporte, numeroInfraccion, matriculaOficial, numeroUnidad, matriculaSuperior
-          ];
+          var dataDB = localStorage.getItem("ParteNovedad");
+          alert(dataDB);
+          dataDB = JSON.parse(dataDB);
+          dataDB[dataDB.length] = [numIncidente, bajoReporte, atiende, fechaEvento, horaReporte, horaLlegada, calle, numeroIntExt, colonia, calleIzquierda, calleDerecha, nombreReportante, nombrePresunto, reporteManifesta, huboSolucion, reporteAcuerdo, presentaAnte, numeroReporte, numeroInfraccion, matriculaOficial, numeroUnidad, matriculaSuperior];
 
-          localStorage.setItem("ParteNovedad", JSON.stringify(data));
-
+          localStorage.setItem("ParteNovedad", JSON.stringify(dataDB));
+          alert("Done");
       /*****************************/  
           var xhr = new XMLHttpRequest();
           var url = "http://policiatijuana.gob.mx/";
@@ -278,6 +276,7 @@
             if (xhr.status === 200) {
               
               var dataLocal = localStorage.getItem("ParteNovedad");
+              alert(dataLocal);
               dataLocal = JSON.parse(dataLocal);
 
               for(var i = 0; i < dataLocal.length; i++) {
@@ -313,7 +312,7 @@
                   },
                   cache: false,        
                   beforeSend: function(){ $(".loader").fadeOut("200").css("display", "block"); },
-                  success: function(data) {   
+                  success: function(request) {   
                     $(".loader").css("display", "none");
                     $.snackbar({
                       content: "Parte novedad ingresada.", 
