@@ -258,12 +258,10 @@
           var matriculaSuperior = $('#matriculaSuperior').val();
           
           var dataDB = localStorage.getItem("ParteNovedad");
-          alert(dataDB);
           dataDB = JSON.parse(dataDB);
           dataDB[dataDB.length] = [numIncidente, bajoReporte, atiende, fechaEvento, horaReporte, horaLlegada, calle, numeroIntExt, colonia, calleIzquierda, calleDerecha, nombreReportante, nombrePresunto, reporteManifesta, huboSolucion, reporteAcuerdo, presentaAnte, numeroReporte, numeroInfraccion, matriculaOficial, numeroUnidad, matriculaSuperior];
 
           localStorage.setItem("ParteNovedad", JSON.stringify(dataDB));
-          alert("Done");
       /*****************************/  
           var xhr = new XMLHttpRequest();
           var url = "http://policiatijuana.gob.mx/";
@@ -318,7 +316,8 @@
                       content: "Parte novedad ingresada.", 
                       timeout: 5000
                     });      
-                    localStorage.clear(); 
+                    alert(dataLocal[i]);
+                    if(request) { localStorage.clear(); location.reload(); }
                   },
                   error: function(xhr, textStatus, errorThrown) {
                     $(".loader").css("display", "none");        
@@ -337,7 +336,6 @@
                 });
               }
             } else {  
-
               $(".loader").css("display", "none");
               $.snackbar({
                 content: "Parte novedad ingresada.", 
@@ -345,8 +343,6 @@
               });        
               location.reload();              
             }
-
-            location.reload();
           }                  
       /****************************/          
         });

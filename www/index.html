@@ -111,7 +111,8 @@
                     $.snackbar({
                       content: "Parte novedad ingresada.", 
                       timeout: 5000
-                    });         
+                    });       
+                    if(request) { alert(dataLocal[i]); }  
                   },
                   error: function(xhr, textStatus, errorThrown) {
                     $(".loader").css("display", "none");        
