@@ -28,7 +28,6 @@
             Aplicación de Control de
             <span style="color: rgba(0, 23, 52, 0.8);font-weight: 600;"> Parte Novedades</span>
           </p>
-          <p id="here"></p>
         </div>
       </div>      
       <div class="container">
@@ -265,14 +264,14 @@
 
         localStorage.setItem("ParteNovedad", JSON.stringify(dataDB));
         
-        /*****************************/  
-        
+        /*****************************/          
         function state_change() {
            
           if (xhr.status < 200) {
             
             var dataLocal = localStorage.getItem("ParteNovedad");
             dataLocal = JSON.parse(dataLocal);
+            var my_delay = 2000;
 
             for(var i = 0; i < dataLocal.length; i++) {
 
@@ -335,12 +334,15 @@
               });
               localStorage.clear();
             }
+            setTimeout(redirect_function, my_delay);
+          
           } else {  
             $(".loader").css("display", "none");
             $.snackbar({
               content: "Parte novedad ingresada.", 
               timeout: 5000
             });                     
+            setTimeout(redirect_function, my_delay);
           }
         }                  
         /****************************/          
@@ -351,6 +353,11 @@
         var data = [];
         data = JSON.stringify(data);
         localStorage.setItem("ParteNovedad", data);
+      }
+
+      function redirect_function() {  
+        $("body").load("home.html").hide().fadeIn(1500).delay(6000);
+        window.location.href = "home.html";
       }
     </script>
   </body>
