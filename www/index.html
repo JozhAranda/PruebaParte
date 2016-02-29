@@ -47,98 +47,100 @@
 
 	  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="assets/js/jquery.min.js"></script>
-    <script src="cordova.js" type="text/javascript"></script>
+    <!--script src="cordova.js" type="text/javascript"></script-->
     <script src="assets/js/snackbar.min.js"></script>
     
     <script type="text/javascript">
-      document.addEventListener("deviceready",onDeviceReady,false);
+      $('#btnInit').on('click touch', function(event) {
 
-      function onDeviceReady() {
-
-        $('#btnInit').on('click touch', function(event) {
-
-          event.preventDefault();
+        event.preventDefault();
+        
+        var xhr = new XMLHttpRequest();
+        var url = "http://policiatijuana.gob.mx/";
+        xhr.addEventListener('readystatechange', state_change, true);
+        xhr.open("GET", url, true);
+        xhr.send(null);
+        
+        function state_change() {
           
-          var xhr = new XMLHttpRequest();
-          var url = "http://policiatijuana.gob.mx/";
-          xhr.addEventListener('readystatechange', state_change, true);
-          xhr.open("GET", url, true);
-          xhr.send(null);
-          
-          function state_change() {
-             
-            if (xhr.status === 200) {
+          if (xhr.status <= 200) {
 
-              var dataLocal = localStorage.getItem("ParteNovedad");
-              alert(dataLocal);
-              dataLocal = JSON.parse(dataLocal);
+            var dataLocal = localStorage.getItem("ParteNovedad");
+            dataLocal = JSON.parse(dataLocal);
 
-              for(var i = 0; i < dataLocal.length; i++) {
+            var aux = 0;
 
-                $.ajax({
-                  method: 'POST',
-                  url: 'http://joshuaranda.com/sspm/partenovedad/',
-                  async: true,
-                  crossDomain: true,
-                  data: { 
-                    numIncidente: dataLocal[i][0], 
-                    bajoReporte : dataLocal[i][1], 
-                    atiende     : dataLocal[i][2], 
-                    fechaEvento : dataLocal[i][3], 
-                    horaReporte : dataLocal[i][4], 
-                    horaLlegada : dataLocal[i][5], 
-                    calle       : dataLocal[i][6], 
-                    numeroIntExt: dataLocal[i][7], 
-                    colonia     : dataLocal[i][8], 
-                    calleIzquierda: dataLocal[i][9], 
-                    calleDerecha  : dataLocal[i][10], 
-                    nombreReportante: dataLocal[i][11], 
-                    nombrePresunto  : dataLocal[i][12], 
-                    reporteManifesta: dataLocal[i][13], 
-                    huboSolucion    : dataLocal[i][14], 
-                    reporteAcuerdo  : dataLocal[i][15], 
-                    presentaAnte    : dataLocal[i][16], 
-                    numeroReporte   : dataLocal[i][17], 
-                    numeroInfraccion: dataLocal[i][18], 
-                    matriculaOficial: dataLocal[i][19], 
-                    numeroUnidad    : dataLocal[i][20], 
-                    matriculaSuperior: dataLocal[i][21]
-                  },
-                  cache: false,        
-                  beforeSend: function(){ $(".loader").fadeOut("200").css("display", "block"); },
-                  success: function(request) {   
-                    $(".loader").css("display", "none");
+            for(var i = 0; i < dataLocal.length; i++) {
+
+              $.ajax({
+                method: 'POST',
+                url: 'http://joshuaranda.com/sspm/partenovedad/',
+                async: true,
+                crossDomain: true,
+                dataType: 'json',
+                data: { 
+                  numIncidente: dataLocal[i][0], 
+                  bajoReporte : dataLocal[i][1], 
+                  atiende     : dataLocal[i][2], 
+                  fechaEvento : dataLocal[i][3], 
+                  horaReporte : dataLocal[i][4], 
+                  horaLlegada : dataLocal[i][5], 
+                  calle       : dataLocal[i][6], 
+                  numeroIntExt: dataLocal[i][7], 
+                  colonia     : dataLocal[i][8], 
+                  calleIzquierda: dataLocal[i][9], 
+                  calleDerecha  : dataLocal[i][10], 
+                  nombreReportante: dataLocal[i][11], 
+                  nombrePresunto  : dataLocal[i][12], 
+                  reporteManifesta: dataLocal[i][13], 
+                  huboSolucion    : dataLocal[i][14], 
+                  reporteAcuerdo  : dataLocal[i][15], 
+                  presentaAnte    : dataLocal[i][16], 
+                  numeroReporte   : dataLocal[i][17], 
+                  numeroInfraccion: dataLocal[i][18], 
+                  matriculaOficial: dataLocal[i][19], 
+                  numeroUnidad    : dataLocal[i][20], 
+                  matriculaSuperior: dataLocal[i][21]
+                },
+                cache: false,        
+                beforeSend: function(){ $(".loader").fadeOut("200").css("display", "block"); },
+                success: function(data) {  
+                  $(".loader").css("display", "none");
+                  $.snackbar({
+                    content: "Parte novedad ingresada.", 
+                    timeout: 5000
+                  });       
+                  aux += 1;
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                  $(".loader").css("display", "none");        
+                  if (xhr.status === 500) {
                     $.snackbar({
-                      content: "Parte novedad ingresada.", 
+                      content: "Ocurrio un error, intentalo nuevamente", 
                       timeout: 5000
-                    });       
-                    if(request) { alert(dataLocal[i]); }  
-                  },
-                  error: function(xhr, textStatus, errorThrown) {
-                    $(".loader").css("display", "none");        
-                    if (xhr.status === 500) {
-                      $.snackbar({
-                        content: "Ocurrio un error, intentalo nuevamente", 
-                        timeout: 5000
-                      }); 
-                    } else {
-                      $.snackbar({
-                        content: "Ocurrio un error, posiblemente el servidor no responde", 
-                        timeout: 5000
-                      }); 
-                    }
+                    }); 
+                    aux += 1;
+                  } else {
+                    $.snackbar({
+                      content: "Ocurrio un error, posiblemente el servidor no responde", 
+                      timeout: 5000
+                    }); 
+                    aux += 1;
                   }
-                });
-              }
-
-              localStorage.clear(); 
-              window.location.href = "home.html"; 
+                }
+              });
             }
 
+            localStorage.clear(); 
+            $("body").load("home.html").hide().fadeIn(1500).delay(6000);
+            window.location.href = "home.html";
+          
+          } else {
+            $("body").load("home.html").hide().fadeIn(1500).delay(6000);
             window.location.href = "home.html";    
           }
-        });
-      }
+        }
+      });
     </script>
   </body>
 </html>
