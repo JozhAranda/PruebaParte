@@ -269,7 +269,7 @@
         
         function state_change() {
            
-          if (xhr.status === 200) {
+          if (xhr.status <= 200) {
             
             var dataLocal = localStorage.getItem("ParteNovedad");
             dataLocal = JSON.parse(dataLocal);
