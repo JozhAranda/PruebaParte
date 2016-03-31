@@ -3,13 +3,13 @@
 <!-- config.xml reference: https://build.phonegap.com/docs/config-xml -->
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
-        id        = "com.phonegap.informativonovedad"
-        version   = "0.7.1">
+        id        = "com.phonegap.partesnovedad"
+        version   = "0.7.4">
 
-    <name>Informativo Novedades</name>
+    <name>Partes Novedades</name>
 
     <description>
-        Informativo Novedades
+        Partes Novedades
     </description>
 
     <author href="http://joshuaranda.com" email="support@joshuaranda.com">
